@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Bootstrap 101 Template</title>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+    </head>
+    <body>
+        <h1></h1>
+
+        <div><select id="application"></select></div>
+        <div><select id="year"></select></div>
+        <div><select id="manufacturer"></select></div>
+        <div><select id="modelline"></select></div>
+        <div><select id="type"></select></div>
+
+        <button id="searchButton">Szukaj</button>
+        
+        <div id="searchResults"></div>
+
+        <script>
+
+            var serveName = 'proxy.php?url=http://customersearch.varta-automotive.com/batterySearchByApplication/pl-PL/26';
+
+            $(function () {
+
+                $.get(serveName, function(data) {
+                    populateSelect('application', data);
+                    populateSelect('year', data);
+                    populateSelect('manufacturer', data);
+                    populateSelectModelline(data);
+                    populateSelect('type', data);
+                });
+
+                $('#application').change(function(){
+                    // populate year, manufacturer, modelline, type
+                    var url = serveName + '/application/' + $('#application').val();
+                    $.get(url, function(data) {
+                        populateSelect('year', data);
+                        populateSelect('manufacturer', data);
+                        populateSelectModelline(data);
+                        populateSelect('type', data);
+                    });
+                });
+
+                $('#year').change(function(){
+                    // populate manufacturer, modelline, type
+                    var url = serveName + '/application/' + $('#application').val() + '/' + $('#year').val();
+                    $.get(url, function(data) {
+                        populateSelect('manufacturer', data);
+                        populateSelectModelline(data);
+                        populateSelect('type', data);
+                    });
+                });
+
+                $('#manufacturer').change(function(){
+                    // populate modelline, type
+                    var url = serveName + '/application/' + $('#application').val() + '/' + $('#year').val() + '/' + $('#manufacturer').val();
+                    $.get(url, function(data) {
+
+                        populateSelectModelline(data);
+                        populateSelect('type', data);
+                    });
+                });
+
+                $('#modelline').change(function(){
+                    // populate type
+                    var url = serveName + '/application/' + $('#application').val() + '/' + $('#year').val() + '/' + $('#manufacturer').val() + '/' + $('#modelline').val();
+                    $.get(url, function(data) {
+                        populateSelect('type', data);
+                    });
+                });
+
+                $('#searchButton').click(function(){
+                    // load search results
+                    var url = serveName + '/application/' + $('#application').val() + '/' + $('#year').val() + '/' + $('#manufacturer').val() + '/' + $('#modelline').val() + '/' + $('#type').val() + '/result';
+                    $('#searchResults').empty();
+                    $.get(url, function(data) {
+                        $(data).find(".searchResult .customsearch-result-detail h3 a").each(function(){
+                            var text = $(this).text();
+                            var pos = text.search(/[0-9 ]{1,12}$/);
+                            if (pos) {
+                                var number = text.substring(pos);
+                                console.log(number);
+                                $('#searchResults').append("<div>" + number + "</div>");
+                            }
+                        });
+                    });
+                });
+
+            });
+
+            function populateSelect(selectId, data) {
+                var options = $(data).find("#" + selectId + " option");
+                $('#' + selectId).empty();
+                options.each(function(){ 
+                    $('#' + selectId).append(this); 
+                });
+                $('#' + selectId).val($(options[0]).val());
+            }
+
+            function populateSelectModelline(data) {
+                var selects = $(data).find("select");
+                var options = $(selects[3]).find("option");
+                $('#modelline').empty();
+                options.each(function(){ 
+                    $('#modelline').append(this); 
+                });
+                $('#modelline').val($(options[0]).val());
+            }
+
+
+        </script>
+    </body>
+</html>

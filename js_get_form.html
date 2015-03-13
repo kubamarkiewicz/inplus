@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Bootstrap 101 Template</title>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+    </head>
+    <body>
+        <h1></h1>
+
+        <div id="batterySearch">
+            <form></form>
+        </div>
+
+
+        <script>
+
+            var serveName = 'proxy.php?url=http://customersearch.varta-automotive.com';
+
+            $(function () {
+
+                loadFormFromURL(serveName + '/batterySearchByApplication/pl-PL/26/application/pc');
+
+            });
+
+
+            function myRedirectToOption(currentPath, optionValue) 
+            {
+                console.log(currentPath);
+                // console.log(optionValue);
+                if (currentPath.charAt(0) == '/') {
+                    currentPath = serveName + currentPath;
+                }
+                if(optionValue != "noSelection"){
+                    currentPath = currentPath + "/" + optionValue;
+                }
+                // console.log(currentPath);
+                loadFormFromURL(currentPath);
+                
+            }
+
+            function loadFormFromURL(path)
+            {
+                $.get(path, function(data) {
+                    $("#batterySearch form").replaceWith($(data).find("#searchByApplicationForm"));
+                });
+            }
+
+        </script>
+    </body>
+</html>

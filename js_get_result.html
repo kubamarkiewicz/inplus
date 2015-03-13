@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Bootstrap 101 Template</title>
+    </head>
+    <body>
+        <h1></h1>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script>
+
+            $(function () {
+
+                var url = 'http://customersearch.varta-automotive.com/batterySearchByApplication/pl-PL/26/application/pc/2009/5/6418/26836/result';
+
+                $.get('proxy.php?url=' + url, function(data) {
+                    // console.log(data);
+                    var options = $(data).find("h5");
+                    options.each( function( index, element ){
+                        $("h1").append( $( this ).text() );
+                    });
+                });
+
+            });
+
+        </script>
+    </body>
+</html>
